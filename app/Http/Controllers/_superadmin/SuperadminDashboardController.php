@@ -66,21 +66,15 @@ class SuperadminDashboardController extends Controller
     // ================= Manajemen Pengguna =================
     public function index2(Request $request)
     {
-        // Ambil filter role, default 'traveler'
         $role = $request->get('role', 'traveler');
-
-        // Ambil keyword search (nama / email)
         $search = $request->get('search');
 
-        // Mulai query user
         $query = User::query();
 
-        // Filter berdasarkan role
         if ($role) {
             $query->where('role', $role);
         }
 
-        // Filter berdasarkan pencarian
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
@@ -88,16 +82,13 @@ class SuperadminDashboardController extends Controller
             });
         }
 
-        // Ambil data terbaru + paginate
         $users = $query->latest()->paginate(10);
 
-        // Pertahankan query parameter di pagination links
         $users->appends([
             'role' => $role,
             'search' => $search,
         ]);
 
-        // Kirim ke view
         return view('_superadmin.users.index', compact('users', 'role', 'search'));
     }
 
@@ -110,7 +101,6 @@ class SuperadminDashboardController extends Controller
         $response = new StreamedResponse(function () use ($products) {
             $handle = fopen('php://output', 'w');
 
-            // Header kolom
             fputcsv($handle, ['ID', 'Nama Barang', 'Deskripsi', 'Harga', 'Status']);
 
             foreach ($products as $product) {
@@ -135,8 +125,8 @@ class SuperadminDashboardController extends Controller
     // ================= Manajemen Produk =================
     public function index3(Request $request)
     {
-        $status = $request->get('status'); // filter status
-        $role   = $request->get('role');   // filter traveler/customer
+        $status = $request->get('status');
+        $role   = $request->get('role');
 
         $query = Product::with('traveler');
 
@@ -170,6 +160,7 @@ class SuperadminDashboardController extends Controller
         $transactions = Transaction::with('user')->latest()->paginate(10);
         return view('_superadmin.transactions.index', compact('transactions'));
     }
+
     public function show($id)
     {
         $transaction = Transaction::with('user')->findOrFail($id);
@@ -189,7 +180,6 @@ class SuperadminDashboardController extends Controller
         $transaction->update([
             'status' => $request->status,
             'amount' => $request->amount,
-            // tambahkan field lain sesuai kebutuhan
         ]);
 
         return redirect()->route('superadmin.transactions')->with('success', 'Transaksi berhasil diperbarui.');
@@ -201,38 +191,33 @@ class SuperadminDashboardController extends Controller
         return redirect()->back()->with('success', 'Transaksi berhasil dihapus');
     }
 
-
     public function export(Request $request)
-{
-    // Contoh: export ke Excel atau CSV
-    $transactions = Transaction::query();
+    {
+        $transactions = Transaction::query();
 
-    // Filter berdasarkan request
-    if($request->filled('search')) {
-        $transactions->where('name', 'like', '%'.$request->search.'%');
+        if($request->filled('search')) {
+            $transactions->where('name', 'like', '%'.$request->search.'%');
+        }
+        if($request->filled('type')) {
+            $transactions->where('type', $request->type);
+        }
+        if($request->filled('status')) {
+            $transactions->where('status', $request->status);
+        }
+
+        $data = $transactions->get();
+
+        $filename = 'transactions_'.date('Ymd_His').'.csv';
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, array_keys($data->first()->toArray()));
+
+        foreach($data as $row) {
+            fputcsv($handle, $row->toArray());
+        }
+        fclose($handle);
+
+        return response()->download($filename)->deleteFileAfterSend(true);
     }
-    if($request->filled('type')) {
-        $transactions->where('type', $request->type);
-    }
-    if($request->filled('status')) {
-        $transactions->where('status', $request->status);
-    }
-
-    $data = $transactions->get();
-
-    // Contoh sederhana export CSV
-    $filename = 'transactions_'.date('Ymd_His').'.csv';
-    $handle = fopen($filename, 'w+');
-    fputcsv($handle, array_keys($data->first()->toArray()));
-
-    foreach($data as $row) {
-        fputcsv($handle, $row->toArray());
-    }
-    fclose($handle);
-
-    return response()->download($filename)->deleteFileAfterSend(true);
-}
-
 
     // ================= Refund =================
     public function index5(Request $request)
@@ -268,7 +253,6 @@ class SuperadminDashboardController extends Controller
         $callback = function() use ($refunds) {
             $handle = fopen('php://output', 'w');
 
-            // Header kolom
             fputcsv($handle, ['ID', 'Nama Penitip', 'ID Transaksi', 'Tanggal', 'Status', 'Total', 'Pembayaran']);
 
             foreach ($refunds as $r) {
@@ -292,13 +276,12 @@ class SuperadminDashboardController extends Controller
     // ================= Pengaturan =================
     public function index6()
     {
-        $user = Auth::user(); // ambil user login
+        $user = Auth::user();
         return view('_superadmin.settings.index', compact('user'));
     }
 
     public function updateSettings(Request $request)
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $request->validate([
@@ -315,6 +298,40 @@ class SuperadminDashboardController extends Controller
         return back()->with('success','Profil berhasil diperbarui!');
     }
 
+    public function updatePreference(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'language' => 'required|string|in:id,en',
+        ]);
+
+        $user->language = $request->language;
+        $user->save();
+
+        app()->setLocale($request->language);
+
+        return back()->with('success','Preferensi berhasil diperbarui!');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ]);
+
+        if (!\Hash::check($request->old_password, $user->password)) {
+            return back()->withErrors(['old_password' => 'Password lama salah']);
+        }
+
+        $user->password = \Hash::make($request->new_password);
+        $user->save();
+
+        return back()->with('success','Password berhasil diperbarui!');
+    }
 
     // ================= Halaman Lain =================
     public function index7()

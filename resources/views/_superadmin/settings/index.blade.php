@@ -7,7 +7,6 @@
 
 @section('content')
 
-
 <div class="card border-0 shadow rounded-4 overflow-hidden">
     <!-- Header -->
     <div class="position-relative bg-light p-4 d-flex align-items-center">
@@ -21,7 +20,7 @@
     </div>
 
     <!-- Body -->
-    <div class="card-body p-5"><!-- p-5 biar lebih lega -->
+    <div class="card-body p-5">
         <!-- Tabs -->
         <ul class="nav nav-tabs mb-4" id="settingTabs">
             <li class="nav-item">
@@ -40,7 +39,7 @@
             <div class="tab-pane fade show active animate__animated animate__fadeIn" id="profil">
                 <form action="{{ route('superadmin.settings.update') }}" method="POST">
                     @csrf
-                    <div class="row g-4"><!-- g-4 biar jarak antar kolom lebih lebar -->
+                    <div class="row g-4">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Username</label>
                             <input type="text" name="username" value="{{ old('username',$user->username) }}" 
@@ -75,7 +74,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="mt-5 text-end"><!-- mt-5 biar lebih lega -->
+                    <div class="mt-5 text-end">
                         <button type="submit" class="btn btn-gradient px-4 py-2 fw-semibold shadow-sm rounded-3">
                             <i class="bi bi-save me-1"></i> Simpan Perubahan
                         </button>
@@ -85,20 +84,57 @@
 
             <!-- Preferensi -->
             <div class="tab-pane fade animate__animated animate__fadeIn" id="preferensi">
-                <p class="text-muted">Pengaturan preferensi user ditaruh di sini...</p>
+                <form action="{{ route('superadmin.settings.preference') }}" method="POST">
+                    @csrf
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Bahasa</label>
+                            <select name="language" class="form-select rounded-3 shadow-sm">
+                                <option value="">Pilih</option>
+                                <option value="id">Indonesia</option>
+                                <option value="en">English</option>
+                                <option value="jp">日本語 (Japan)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-5 text-end">
+                        <button type="submit" class="btn btn-gradient px-4 py-2 fw-semibold shadow-sm rounded-3">
+                            <i class="bi bi-save me-1"></i> Simpan
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Keamanan -->
             <div class="tab-pane fade animate__animated animate__fadeIn" id="keamanan">
-                <p class="text-muted">Ubah password, 2FA, dan keamanan lainnya bisa ditaruh di sini.</p>
+                <form action="{{ route('superadmin.settings.password') }}" method="POST">
+                    @csrf
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Kata Sandi Lama</label>
+                            <input type="password" name="old_password" class="form-control rounded-3 shadow-sm">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Kata Sandi Baru</label>
+                            <input type="password" name="new_password" class="form-control rounded-3 shadow-sm">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Konfirmasi Kata Sandi</label>
+                            <input type="password" name="confirm_password" class="form-control rounded-3 shadow-sm">
+                        </div>
+                    </div>
+                    <div class="mt-5 text-end">
+                        <button type="submit" class="btn btn-gradient px-4 py-2 fw-semibold shadow-sm rounded-3">
+                            <i class="bi bi-lock me-1"></i> Simpan
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-
 <style>
-    /* Tabs */
     .nav-tabs .nav-link {
         border: none;
         border-bottom: 3px solid transparent;
@@ -131,7 +167,6 @@
     }
 </style>
 
-<!-- Tambah animasi animate.css (cdn) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
 

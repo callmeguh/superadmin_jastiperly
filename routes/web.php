@@ -101,82 +101,50 @@ Route::middleware(['auth', 'role:finance'])->prefix('finance')->group(function (
 
 
 // --------------------------------------------------- SUPERADMIN -------------------------------------------------------
-
 Route::middleware(['auth', 'role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
 
     // ================= Dashboard =================
-    Route::get('/dashboard', [SuperadminDashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::get('/dashboard', [SuperadminDashboardController::class, 'index'])->name('dashboard');
 
     // ================= Manajemen Pengguna =================
-    Route::get('/users', [SuperadminDashboardController::class, 'index2'])
-        ->name('users.index');
-    Route::get('/users/export', [SuperadminDashboardController::class, 'exportUsers'])
-        ->name('users.export');
-    Route::get('/users/{user}', [SuperadminDashboardController::class, 'show'])
-        ->name('users.show');
-    Route::get('/users/{user}/edit', [SuperadminDashboardController::class, 'edit'])
-        ->name('users.edit');
-    Route::delete('/users/{user}', [SuperadminDashboardController::class, 'destroy'])
-        ->name('users.destroy');
+    Route::get('/users', [SuperadminDashboardController::class, 'index2'])->name('users.index');
+    Route::get('/users/export', [SuperadminDashboardController::class, 'exportUsers'])->name('users.export');
+    Route::get('/users/{user}', [SuperadminDashboardController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [SuperadminDashboardController::class, 'edit'])->name('users.edit');
+    Route::delete('/users/{user}', [SuperadminDashboardController::class, 'destroy'])->name('users.destroy');
 
     // ================= Manajemen Produk =================
-    Route::get('/products', [SuperadminDashboardController::class, 'index3'])
-        ->name('products');
-    Route::post('/products/{id}/validate', [SuperadminDashboardController::class, 'validateProduct'])
-        ->name('products.validate');
-    Route::get('/products/export', [SuperadminDashboardController::class, 'exportProducts'])
-        ->name('products.export');
+    Route::get('/products', [SuperadminDashboardController::class, 'index3'])->name('products');
+    Route::post('/products/{id}/validate', [SuperadminDashboardController::class, 'validateProduct'])->name('products.validate');
+    Route::get('/products/export', [SuperadminDashboardController::class, 'exportProducts'])->name('products.export');
 
     // ================= Transaksi =================
-    Route::get('/transactions', [SuperadminDashboardController::class, 'index4'])
-        ->name('transactions');
-
-    Route::delete('/transactions/{transaction}', [SuperadminDashboardController::class, 'destroy'])
-        ->name('transactions.destroy');
-
-    Route::get('/transactions/{transaction}', [SuperadminDashboardController::class, 'show'])
-        ->name('transactions.show');
-
-    // Tambahkan edit & update
-    Route::get('/transactions/{transaction}/edit', [SuperadminDashboardController::class, 'edit'])
-        ->name('transactions.edit');
-
-    Route::put('/transactions/{transaction}', [SuperadminDashboardController::class, 'update'])
-        ->name('transactions.update');
-
-    Route::get('transactions-export', [SuperadminDashboardController::class, 'export'])
-        ->name('transactions.export');
-
+    Route::get('/transactions', [SuperadminDashboardController::class, 'index4'])->name('transactions');
+    Route::delete('/transactions/{transaction}', [SuperadminDashboardController::class, 'destroy'])->name('transactions.destroy');
+    Route::get('/transactions/{transaction}', [SuperadminDashboardController::class, 'show'])->name('transactions.show');
+    Route::get('/transactions/{transaction}/edit', [SuperadminDashboardController::class, 'edit'])->name('transactions.edit');
+    Route::put('/transactions/{transaction}', [SuperadminDashboardController::class, 'update'])->name('transactions.update');
+    Route::get('transactions-export', [SuperadminDashboardController::class, 'export'])->name('transactions.export');
 
     // ================= Refund =================
-    Route::get('/refunds', [SuperadminDashboardController::class, 'index5'])
-        ->name('refunds.index');
-    Route::get('/refunds/export', [SuperadminDashboardController::class, 'exportRefunds'])
-        ->name('refunds.export');
-    Route::get('/refunds/{id}', [SuperadminDashboardController::class, 'showRefund'])
-        ->name('refunds.show');
-    Route::get('/refunds/{id}/edit', [SuperadminDashboardController::class, 'editRefund'])
-        ->name('refunds.edit');
-    Route::delete('/refunds/{id}', [SuperadminDashboardController::class, 'destroyRefund'])
-        ->name('refunds.destroy');
+    Route::get('/refunds', [SuperadminDashboardController::class, 'index5'])->name('refunds.index');
+    Route::get('/refunds/export', [SuperadminDashboardController::class, 'exportRefunds'])->name('refunds.export');
+    Route::get('/refunds/{id}', [SuperadminDashboardController::class, 'showRefund'])->name('refunds.show');
+    Route::get('/refunds/{id}/edit', [SuperadminDashboardController::class, 'editRefund'])->name('refunds.edit');
+    Route::delete('/refunds/{id}', [SuperadminDashboardController::class, 'destroyRefund'])->name('refunds.destroy');
 
     // ================= Pengaturan =================
     Route::get('/settings', [SuperadminDashboardController::class, 'index6'])->name('settings');
     Route::post('/settings/update', [SuperadminDashboardController::class, 'updateSettings'])->name('settings.update');
+    Route::post('/settings/preference', [SuperadminDashboardController::class, 'updatePreference'])->name('settings.preference');
+    Route::post('/settings/password', [SuperadminDashboardController::class, 'updatePassword'])->name('settings.password');
 
     // ================= Dashboard Tambahan / Halaman Lain =================
-    Route::get('/dashboard7', [SuperadminDashboardController::class, 'index7'])
-        ->name('index7');
-    Route::get('/dashboard8', [SuperadminDashboardController::class, 'index8'])
-        ->name('index8');
-    Route::get('/dashboard9', [SuperadminDashboardController::class, 'index9'])
-        ->name('index9');
-    Route::get('/dashboard10', [SuperadminDashboardController::class, 'index10'])
-        ->name('index10');
+    Route::get('/dashboard7', [SuperadminDashboardController::class, 'index7'])->name('index7');
+    Route::get('/dashboard8', [SuperadminDashboardController::class, 'index8'])->name('index8');
+    Route::get('/dashboard9', [SuperadminDashboardController::class, 'index9'])->name('index9');
+    Route::get('/dashboard10', [SuperadminDashboardController::class, 'index10'])->name('index10');
 });
-
-
 
 
 
@@ -325,7 +293,7 @@ Route::middleware(['auth'])->group(function () {
     // Blog
     Route::prefix('blog')->group(function () {
         Route::controller(BlogController::class)->group(function () {
-            Route::get('/addBlog', 'addBlog')->name('addBlog');
+            Route::get('/addBlog', action: 'addBlog')->name('addBlog');
             Route::get('/blog', 'blog')->name('blog');
             Route::get('/blogDetails', 'blogDetails')->name('blogDetails');
         });

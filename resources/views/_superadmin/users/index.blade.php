@@ -37,10 +37,12 @@
                 </li>
             </ul>
 
-            <a href="{{ route('superadmin.users.export', ['role' => $role]) }}" 
-               class="btn btn-sm btn-warning">
-                <iconify-icon icon="mdi:download" class="me-1"></iconify-icon> Unduh Data
-            </a>
+           <a href="{{ route('superadmin.users.export', ['role' => $role]) }}" 
+   class="btn btn-warning btn-sm d-inline-flex align-items-center gap-1 shadow-sm rounded-pill px-3 py-2">
+    <iconify-icon icon="mdi:download-circle-outline" width="18" height="18"></iconify-icon>
+    <span>Unduh Data</span>
+</a>
+
         </div>
 
         <!-- Table -->
